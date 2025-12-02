@@ -1,0 +1,18 @@
+STT
+Họ tên	
+Chức danh	
+Giới tính	
+Ngày sinh	
+SĐT	
+Thẻ Căn cước (CC): Số thẻ,	Ngày cấp,	Nơi cấp	
+Trình độ chuyên môn: Loại bằng,	Năm tốt nghiệp,	Chuyên ngành,	Trường Đại học			
+Mã số BHXH	
+Mã số thuế	
+Quê quán	
+Địa chỉ hiện tại	
+Thời gian bắt đầu làm việc 
+Phân tổ	
+Địa chỉ IP	
+Địa chỉ email	
+Ghi chú
+															
