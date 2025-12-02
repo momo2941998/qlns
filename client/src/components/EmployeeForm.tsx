@@ -15,6 +15,7 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
   const dispatch = useAppDispatch();
   const { departments } = useAppSelector((state) => state.departments);
   const [avatar, setAvatar] = useState<string>(employee?.avatar || '');
+  const [isDirty, setIsDirty] = useState(false);
 
   const [formData, setFormData] = useState({
     stt: employee?.stt || 0,
@@ -46,9 +47,18 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
     department: employee?.department?._id || '',
   });
 
+  // Lưu formData ban đầu để so sánh
+  const [initialFormData] = useState(() => JSON.stringify(formData));
+
   useEffect(() => {
     dispatch(fetchDepartments());
   }, [dispatch]);
+
+  // Track form changes
+  useEffect(() => {
+    const hasChanges = JSON.stringify(formData) !== initialFormData;
+    setIsDirty(hasChanges);
+  }, [formData, initialFormData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,8 +72,25 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
     onClose();
   };
 
+  // Xử lý khi click vào overlay (bên ngoài modal)
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Chỉ xử lý khi click vào overlay, không phải modal-content
+    if (e.target === e.currentTarget) {
+      if (isDirty) {
+        const confirmed = window.confirm(
+          'Bạn có thay đổi chưa được lưu. Bạn có chắc chắn muốn đóng?'
+        );
+        if (confirmed) {
+          onClose();
+        }
+      } else {
+        onClose();
+      }
+    }
+  };
+
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content modal-large">
         <h2>{employee ? 'Sửa Nhân viên' : 'Thêm Nhân viên'}</h2>
 
@@ -362,7 +389,22 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
             <button type="submit" className="btn btn-primary">
               {employee ? 'Cập nhật' : 'Thêm mới'}
             </button>
-            <button type="button" className="btn btn-secondary" onClick={onClose}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => {
+                if (isDirty) {
+                  const confirmed = window.confirm(
+                    'Bạn có thay đổi chưa được lưu. Bạn có chắc chắn muốn đóng?'
+                  );
+                  if (confirmed) {
+                    onClose();
+                  }
+                } else {
+                  onClose();
+                }
+              }}
+            >
               Hủy
             </button>
           </div>

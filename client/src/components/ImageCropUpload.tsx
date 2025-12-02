@@ -77,6 +77,23 @@ const ImageCropUpload = ({
     }
   };
 
+  // Xử lý khi ảnh load xong - set completedCrop mặc định
+  const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const { width, height } = e.currentTarget;
+
+    // Convert crop từ % sang pixel
+    const pixelCrop: PixelCrop = {
+      unit: 'px',
+      x: (crop.x / 100) * width,
+      y: (crop.y / 100) * height,
+      width: (crop.width / 100) * width,
+      height: (crop.height / 100) * height,
+    };
+
+    setCompletedCrop(pixelCrop);
+    console.log('🟢 Image loaded, initial crop set:', pixelCrop);
+  };
+
   // Convert canvas thành base64
   const getCroppedImg = async (): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -295,6 +312,7 @@ const ImageCropUpload = ({
               src={imgSrc}
               alt="Crop"
               style={{ maxWidth: '100%', maxHeight: '400px' }}
+              onLoad={onImageLoad}
             />
           </ReactCrop>
 

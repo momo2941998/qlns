@@ -42,12 +42,12 @@ export class ImageService {
 
       // Xử lý ảnh với Sharp
       await sharp(imageBuffer)
-        .resize(300, 300, {
-          fit: 'cover',
-          position: 'center'
-        })
+        // .resize(300, 300, {
+        //   fit: 'cover',
+        //   position: 'center'
+        // })
         .webp({
-          quality: 85, // Chất lượng 85% cho WebP
+          quality: 100, // Chất lượng 85% cho WebP
           effort: 6    // Level nén (0-6, cao hơn = nén tốt hơn nhưng chậm hơn)
         })
         .toFile(filepath);
