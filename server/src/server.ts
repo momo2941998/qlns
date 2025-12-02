@@ -19,7 +19,7 @@ app.use('/api/departments', departmentRoutes);
 app.use('/api/employees', employeeRoutes);
 
 // Health check
-app.get('/api/health', (req: Request, res: Response) => {
+app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'OK', message: 'Server is running' });
 });
 

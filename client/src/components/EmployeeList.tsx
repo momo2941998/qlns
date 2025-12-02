@@ -1,50 +1,106 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { fetchEmployees } from '../features/employees/employeeSlice';
+import { fetchEmployees, deleteEmployee } from '../features/employees/employeeSlice';
+import { Employee } from '../types';
+import EmployeeForm from './EmployeeForm';
 
 const EmployeeList = () => {
   const dispatch = useAppDispatch();
   const { employees, loading, error } = useAppSelector((state) => state.employees);
+  const [showForm, setShowForm] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState<Employee | undefined>();
 
   useEffect(() => {
     dispatch(fetchEmployees());
   }, [dispatch]);
 
-  if (loading) return <div>Đang tải...</div>;
-  if (error) return <div>Lỗi: {error}</div>;
+  const handleAdd = () => {
+    setEditingEmployee(undefined);
+    setShowForm(true);
+  };
+
+  const handleEdit = (employee: Employee) => {
+    setEditingEmployee(employee);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (window.confirm(`Bạn có chắc chắn muốn xóa nhân viên "${name}"?`)) {
+      await dispatch(deleteEmployee(id));
+      dispatch(fetchEmployees());
+    }
+  };
+
+  const handleCloseForm = () => {
+    setShowForm(false);
+    setEditingEmployee(undefined);
+    dispatch(fetchEmployees());
+  };
+
+  if (loading) return <div className="loading">Đang tải...</div>;
+  if (error) return <div className="error">Lỗi: {error}</div>;
 
   return (
-    <div>
-      <h2>Danh sách Nhân viên</h2>
+    <div className="section">
+      <div className="section-header">
+        <h2>Danh sách Nhân viên</h2>
+        <button className="btn btn-primary" onClick={handleAdd}>
+          + Thêm nhân viên
+        </button>
+      </div>
+
       {employees.length === 0 ? (
-        <p>Chưa có nhân viên nào</p>
+        <p className="empty-message">Chưa có nhân viên nào</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>STT</th>
-              <th>Họ tên</th>
-              <th>Chức danh</th>
-              <th>Giới tính</th>
-              <th>Phòng ban</th>
-              <th>Email</th>
-              <th>SĐT</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employees.map((emp) => (
-              <tr key={emp._id}>
-                <td>{emp.stt}</td>
-                <td>{emp.hoTen}</td>
-                <td>{emp.chucDanh}</td>
-                <td>{emp.gioiTinh}</td>
-                <td>{emp.department?.ten || 'N/A'}</td>
-                <td>{emp.email}</td>
-                <td>{emp.sdt}</td>
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Họ tên</th>
+                <th>Chức danh</th>
+                <th>Giới tính</th>
+                <th>Ngày sinh</th>
+                <th>Phòng ban</th>
+                <th>Email</th>
+                <th>SĐT</th>
+                <th>Thao tác</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {employees.map((emp) => (
+                <tr key={emp._id}>
+                  <td>{emp.stt}</td>
+                  <td>{emp.hoTen}</td>
+                  <td>{emp.chucDanh}</td>
+                  <td>{emp.gioiTinh}</td>
+                  <td>{new Date(emp.ngaySinh).toLocaleDateString('vi-VN')}</td>
+                  <td>{emp.department?.ten || 'N/A'}</td>
+                  <td>{emp.email}</td>
+                  <td>{emp.sdt}</td>
+                  <td>
+                    <button
+                      className="btn btn-sm btn-edit"
+                      onClick={() => handleEdit(emp)}
+                    >
+                      Sửa
+                    </button>
+                    <button
+                      className="btn btn-sm btn-delete"
+                      onClick={() => handleDelete(emp._id, emp.hoTen)}
+                    >
+                      Xóa
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {showForm && (
+        <EmployeeForm employee={editingEmployee} onClose={handleCloseForm} />
       )}
     </div>
   );
