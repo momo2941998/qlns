@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { createEmployee, updateEmployee } from '../features/employees/employeeSlice';
 import { fetchDepartments } from '../features/departments/departmentSlice';
 import { Employee } from '../types';
+import { formatDateToYYYYMMDD } from '../utils/dateFormat';
 
 interface EmployeeFormProps {
   employee?: Employee;
@@ -18,16 +19,16 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
     hoTen: employee?.hoTen || '',
     chucDanh: employee?.chucDanh || '',
     gioiTinh: employee?.gioiTinh || 'Nam',
-    ngaySinh: employee?.ngaySinh?.split('T')[0] || '',
+    ngaySinh: formatDateToYYYYMMDD(employee?.ngaySinh) || '',
     sdt: employee?.sdt || '',
     canCuoc: {
       soThe: employee?.canCuoc?.soThe || '',
-      ngayCap: employee?.canCuoc?.ngayCap?.split('T')[0] || '',
+      ngayCap: formatDateToYYYYMMDD(employee?.canCuoc?.ngayCap) || '',
       noiCap: employee?.canCuoc?.noiCap || '',
     },
     trinhDoChuyenMon: {
       loaiBang: employee?.trinhDoChuyenMon?.loaiBang || '',
-      namTotNghiep: employee?.trinhDoChuyenMon?.namTotNghiep || 0,
+      namTotNghiep: employee?.trinhDoChuyenMon?.namTotNghiep || '',
       chuyenNganh: employee?.trinhDoChuyenMon?.chuyenNganh || '',
       truongDaiHoc: employee?.trinhDoChuyenMon?.truongDaiHoc || '',
     },
@@ -35,7 +36,7 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
     maSoThue: employee?.maSoThue || '',
     queQuan: employee?.queQuan || '',
     diaChiHienTai: employee?.diaChiHienTai || '',
-    thoiGianBatDauLamViec: employee?.thoiGianBatDauLamViec?.split('T')[0] || '',
+    thoiGianBatDauLamViec: formatDateToYYYYMMDD(employee?.thoiGianBatDauLamViec) || '',
     phanTo: employee?.phanTo || '',
     diaChiIP: employee?.diaChiIP || '',
     email: employee?.email || '',
@@ -216,7 +217,7 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
             <div className="form-group">
               <label>Năm tốt nghiệp:</label>
               <input
-                type="number"
+                type="text"
                 value={formData.trinhDoChuyenMon.namTotNghiep}
                 onChange={(e) =>
                   setFormData({

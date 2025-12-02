@@ -7,11 +7,13 @@ import employeeReducer from '../features/employees/employeeSlice';
 const departmentPersistConfig = {
   key: 'departments',
   storage,
+  blacklist: ['loading', 'error'], // Không lưu loading và error state
 };
 
 const employeePersistConfig = {
   key: 'employees',
   storage,
+  blacklist: ['loading', 'error'], // Không lưu loading và error state
 };
 
 const persistedDepartmentReducer = persistReducer(departmentPersistConfig, departmentReducer);

@@ -5,6 +5,7 @@ import { ENV } from './config/environments';
 import { connectDB } from './config/database';
 import departmentRoutes from './routes/department.routes';
 import employeeRoutes from './routes/employee.routes';
+import importRoutes from './routes/import.routes';
 
 const app: Application = express();
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/departments', departmentRoutes);
 app.use('/api/employees', employeeRoutes);
+app.use('/api/import', importRoutes);
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { fetchEmployees, deleteEmployee } from '../features/employees/employeeSlice';
 import { Employee } from '../types';
+import { formatDateToYYYYMMDD } from '../utils/dateFormat';
 import EmployeeForm from './EmployeeForm';
 
 const EmployeeList = () => {
@@ -74,7 +75,7 @@ const EmployeeList = () => {
                   <td>{emp.hoTen}</td>
                   <td>{emp.chucDanh}</td>
                   <td>{emp.gioiTinh}</td>
-                  <td>{new Date(emp.ngaySinh).toLocaleDateString('vi-VN')}</td>
+                  <td>{formatDateToYYYYMMDD(emp.ngaySinh)}</td>
                   <td>{emp.department?.ten || 'N/A'}</td>
                   <td>{emp.email}</td>
                   <td>{emp.sdt}</td>

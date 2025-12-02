@@ -1,14 +1,19 @@
-import DepartmentList from './components/DepartmentList';
-import EmployeeList from './components/EmployeeList';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './components/Home';
+import DepartmentDetailPage from './components/DepartmentDetailPage';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <h1>Hệ thống Quản lý Nhân sự</h1>
-      <DepartmentList />
-      <EmployeeList />
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        <h1>Hệ thống Quản lý Nhân sự</h1>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/departments/:id" element={<DepartmentDetailPage />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 

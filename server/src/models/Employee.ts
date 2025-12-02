@@ -5,7 +5,7 @@ export interface IEmployee extends Document {
   hoTen: string;
   chucDanh: string;
   gioiTinh: string;
-  ngaySinh: Date;
+  ngaySinh?: Date;
   sdt: string;
   canCuoc: {
     soThe: string;
@@ -14,7 +14,7 @@ export interface IEmployee extends Document {
   };
   trinhDoChuyenMon: {
     loaiBang: string;
-    namTotNghiep: number;
+    namTotNghiep?: string;
     chuyenNganh: string;
     truongDaiHoc: string;
   };
@@ -38,7 +38,7 @@ const EmployeeSchema: Schema = new Schema(
     hoTen: { type: String, required: true, trim: true },
     chucDanh: { type: String, trim: true },
     gioiTinh: { type: String, enum: ['Nam', 'Nữ', 'Khác'], required: true },
-    ngaySinh: { type: Date, required: true },
+    ngaySinh: { type: Date },
     sdt: { type: String, trim: true },
     canCuoc: {
       soThe: { type: String, trim: true },
@@ -47,7 +47,7 @@ const EmployeeSchema: Schema = new Schema(
     },
     trinhDoChuyenMon: {
       loaiBang: { type: String, trim: true },
-      namTotNghiep: { type: Number },
+      namTotNghiep: { type: String, trim: true },
       chuyenNganh: { type: String, trim: true },
       truongDaiHoc: { type: String, trim: true },
     },

@@ -12,7 +12,7 @@ export interface Employee {
   hoTen: string;
   chucDanh: string;
   gioiTinh: 'Nam' | 'Nữ' | 'Khác';
-  ngaySinh: string;
+  ngaySinh?: string;
   sdt: string;
   canCuoc: {
     soThe: string;
@@ -21,7 +21,7 @@ export interface Employee {
   };
   trinhDoChuyenMon: {
     loaiBang: string;
-    namTotNghiep: number;
+    namTotNghiep?: string;
     chuyenNganh: string;
     truongDaiHoc: string;
   };

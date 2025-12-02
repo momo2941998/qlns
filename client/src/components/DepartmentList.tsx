@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { fetchDepartments, deleteDepartment } from '../features/departments/departmentSlice';
 import { Department } from '../types';
 import DepartmentForm from './DepartmentForm';
 
 const DepartmentList = () => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { departments, loading, error } = useAppSelector((state) => state.departments);
   const [showForm, setShowForm] = useState(false);
@@ -22,6 +24,10 @@ const DepartmentList = () => {
   const handleEdit = (department: Department) => {
     setEditingDepartment(department);
     setShowForm(true);
+  };
+
+  const handleView = (department: Department) => {
+    navigate(`/departments/${department._id}`);
   };
 
   const handleDelete = async (id: string, name: string) => {
@@ -66,6 +72,12 @@ const DepartmentList = () => {
                 <td>{dept.stt}</td>
                 <td>{dept.ten}</td>
                 <td>
+                  <button
+                    className="btn btn-sm btn-view"
+                    onClick={() => handleView(dept)}
+                  >
+                    Xem
+                  </button>
                   <button
                     className="btn btn-sm btn-edit"
                     onClick={() => handleEdit(dept)}
