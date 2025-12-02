@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { fetchEmployees, deleteEmployee } from '../features/employees/employeeSlice';
 import { Employee } from '../types';
 import { formatDateToYYYYMMDD } from '../utils/dateFormat';
+import { getAvatarUrl } from '../utils/imageUrl';
 import EmployeeForm from './EmployeeForm';
 
 const EmployeeList = () => {
@@ -58,6 +59,7 @@ const EmployeeList = () => {
             <thead>
               <tr>
                 <th>STT</th>
+                <th>Avatar</th>
                 <th>Họ tên</th>
                 <th>Chức danh</th>
                 <th>Giới tính</th>
@@ -72,6 +74,37 @@ const EmployeeList = () => {
               {employees.map((emp) => (
                 <tr key={emp._id}>
                   <td>{emp.stt}</td>
+                  <td>
+                    {emp.avatar ? (
+                      <img
+                        src={getAvatarUrl(emp.avatar)}
+                        alt={emp.hoTen}
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          objectFit: 'cover',
+                          border: '1px solid #ddd'
+                        }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          backgroundColor: '#e0e0e0',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '14px',
+                          color: '#666'
+                        }}
+                      >
+                        {emp.hoTen.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </td>
                   <td>{emp.hoTen}</td>
                   <td>{emp.chucDanh}</td>
                   <td>{emp.gioiTinh}</td>

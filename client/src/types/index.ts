@@ -34,6 +34,7 @@ export interface Employee {
   diaChiIP: string;
   email: string;
   ghiChu: string;
+  avatar?: string;
   department: Department;
   createdAt: string;
   updatedAt: string;

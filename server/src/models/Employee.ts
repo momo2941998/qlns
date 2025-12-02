@@ -27,6 +27,7 @@ export interface IEmployee extends Document {
   diaChiIP: string;
   email: string;
   ghiChu: string;
+  avatar?: string;
   department: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -60,6 +61,7 @@ const EmployeeSchema: Schema = new Schema(
     diaChiIP: { type: String, trim: true },
     email: { type: String, trim: true, lowercase: true },
     ghiChu: { type: String, trim: true },
+    avatar: { type: String },
     department: {
       type: Schema.Types.ObjectId,
       ref: 'Department',

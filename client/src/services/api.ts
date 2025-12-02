@@ -27,4 +27,15 @@ export const employeeAPI = {
   delete: (id: string) => api.delete(`/employees/${id}`),
 };
 
+// Avatar API
+export const avatarAPI = {
+  upload: (employeeId: string, imageBase64: string) =>
+    api.post<{ message: string; avatar: string }>('/avatar/upload', {
+      employeeId,
+      image: imageBase64,
+    }),
+  delete: (employeeId: string) =>
+    api.delete<{ message: string }>(`/avatar/${employeeId}`),
+};
+
 export default api;

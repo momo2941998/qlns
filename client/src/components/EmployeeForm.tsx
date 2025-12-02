@@ -4,6 +4,7 @@ import { createEmployee, updateEmployee } from '../features/employees/employeeSl
 import { fetchDepartments } from '../features/departments/departmentSlice';
 import { Employee } from '../types';
 import { formatDateToYYYYMMDD } from '../utils/dateFormat';
+import ImageCropUpload from './ImageCropUpload';
 
 interface EmployeeFormProps {
   employee?: Employee;
@@ -13,6 +14,7 @@ interface EmployeeFormProps {
 const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
   const dispatch = useAppDispatch();
   const { departments } = useAppSelector((state) => state.departments);
+  const [avatar, setAvatar] = useState<string>(employee?.avatar || '');
 
   const [formData, setFormData] = useState({
     stt: employee?.stt || 0,
@@ -64,6 +66,19 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
     <div className="modal-overlay">
       <div className="modal-content modal-large">
         <h2>{employee ? 'Sửa Nhân viên' : 'Thêm Nhân viên'}</h2>
+
+        {/* Avatar upload - chỉ hiển thị khi edit nhân viên */}
+        {employee && employee._id && (
+          <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid #e0e0e0', borderRadius: '4px' }}>
+            <h3 style={{ marginTop: 0, marginBottom: '15px' }}>Ảnh đại diện</h3>
+            <ImageCropUpload
+              employeeId={employee._id}
+              currentAvatar={avatar}
+              onUploadSuccess={(newAvatar) => setAvatar(newAvatar)}
+            />
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="form-grid">
             <div className="form-group">

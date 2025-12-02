@@ -44,3 +44,4 @@ persist/
 
 # MongoDB data
 mongodb_data/
+uploads/
