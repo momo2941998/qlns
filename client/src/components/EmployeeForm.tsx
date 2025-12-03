@@ -64,9 +64,9 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
     e.preventDefault();
 
     if (employee) {
-      await dispatch(updateEmployee({ id: employee._id, data: formData }));
+      await dispatch(updateEmployee({ id: employee._id, data: formData as any }));
     } else {
-      await dispatch(createEmployee(formData));
+      await dispatch(createEmployee(formData as any));
     }
 
     onClose();
@@ -141,7 +141,7 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
               <label>Giới tính:</label>
               <select
                 value={formData.gioiTinh}
-                onChange={(e) => setFormData({ ...formData, gioiTinh: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, gioiTinh: e.target.value as 'Nam' | 'Nữ' | 'Khác' })}
                 required
               >
                 <option value="Nam">Nam</option>
@@ -266,7 +266,7 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
                     ...formData,
                     trinhDoChuyenMon: {
                       ...formData.trinhDoChuyenMon,
-                      namTotNghiep: Number(e.target.value),
+                      namTotNghiep: e.target.value,
                     },
                   })
                 }

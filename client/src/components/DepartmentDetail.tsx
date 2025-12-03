@@ -3,7 +3,6 @@ import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { fetchEmployees, deleteEmployee } from '../features/employees/employeeSlice';
 import { Department, Employee } from '../types';
 import { formatDateToYYYYMMDD } from '../utils/dateFormat';
-import axios from 'axios';
 
 interface DepartmentDetailProps {
   department: Department;
