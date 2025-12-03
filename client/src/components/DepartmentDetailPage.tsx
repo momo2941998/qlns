@@ -5,6 +5,7 @@ import { fetchDepartments } from '../features/departments/departmentSlice';
 import { fetchEmployees, deleteEmployee } from '../features/employees/employeeSlice';
 import { Employee } from '../types';
 import { formatDateToYYYYMMDD } from '../utils/dateFormat';
+import { getAvatarUrl } from '../utils/imageUrl';
 
 interface ColumnConfig {
   key: string;
@@ -28,6 +29,41 @@ const DepartmentDetailPage = () => {
   // Định nghĩa tất cả các cột có thể hiển thị
   const allColumns: ColumnConfig[] = [
     { key: 'stt', label: 'STT', render: (emp) => emp.stt },
+    {
+      key: 'avatar',
+      label: 'Avatar',
+      render: (emp) => (
+        emp.avatar ? (
+          <img
+            src={getAvatarUrl(emp.avatar)}
+            alt={emp.hoTen}
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: '1px solid #ddd',
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              backgroundColor: '#e0e0e0',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '14px',
+              color: '#666',
+            }}
+          >
+            {emp.hoTen.charAt(0).toUpperCase()}
+          </div>
+        )
+      )
+    },
     { key: 'hoTen', label: 'Họ tên', render: (emp) => emp.hoTen },
     { key: 'chucDanh', label: 'Chức danh', render: (emp) => emp.chucDanh },
     { key: 'gioiTinh', label: 'Giới tính', render: (emp) => emp.gioiTinh },
@@ -41,12 +77,13 @@ const DepartmentDetailPage = () => {
     { key: 'diaChiHienTai', label: 'Địa chỉ hiện tại', render: (emp) => emp.diaChiHienTai },
     { key: 'trinhDo', label: 'Trình độ', render: (emp) => emp.trinhDoChuyenMon?.loaiBang },
     { key: 'chuyenNganh', label: 'Chuyên ngành', render: (emp) => emp.trinhDoChuyenMon?.chuyenNganh },
+    { key: 'truongDaiHoc', label: 'Trường Đại học', render: (emp) => emp.trinhDoChuyenMon?.truongDaiHoc },
     { key: 'phanTo', label: 'Phân tổ', render: (emp) => emp.phanTo },
     { key: 'diaChiIP', label: 'Địa chỉ IP', render: (emp) => emp.diaChiIP },
   ];
 
   // Load visible columns từ localStorage hoặc dùng mặc định
-  const defaultVisibleColumns = ['stt', 'hoTen', 'chucDanh', 'gioiTinh', 'email', 'sdt'];
+  const defaultVisibleColumns = ['stt', 'avatar', 'hoTen', 'chucDanh', 'gioiTinh', 'email', 'sdt'];
   const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
     const saved = localStorage.getItem(`dept-page-${id}-columns`);
     return saved ? JSON.parse(saved) : defaultVisibleColumns;
