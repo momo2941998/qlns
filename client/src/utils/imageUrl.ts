@@ -12,5 +12,5 @@ export const getAvatarUrl = (filename?: string): string => {
 
   // Tạo URL từ filename
   // Backend serve tại /uploads/avatar
-  return `/uploads/avatar/${filename}`;
+  return `${import.meta.env.VITE_API_URL}/uploads/avatar/${filename}`;
 };

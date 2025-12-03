@@ -45,7 +45,7 @@ const ImportEmployee = () => {
       formData.append('file', file);
       formData.append('departmentId', departmentId);
 
-      const response = await axios.post('/api/import/employees', formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/import/employees`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
