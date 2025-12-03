@@ -4,7 +4,7 @@ dotenv.config();
 export const ENV = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: parseInt(process.env.PORT || '5000', 10),
-  MONGO_URI: process.env.MONGO_URI || 'mongodb://admin:admin123@localhost:27017/qlns_db?authSource=admin',
+  MONGO_URI: process.env.MONGO_URI || 'mongodb://admin:admin123@10.4.201.26:27017/qlns_db?authSource=admin',
   UPLOAD_DIR: process.env.UPLOAD_DIR || 'uploads/avatars',
 } as const;
 

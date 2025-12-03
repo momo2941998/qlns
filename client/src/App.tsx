@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/Home';
 import DepartmentDetailPage from './components/DepartmentDetailPage';
 import NameGamePage from './components/NameGamePage';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 function App() {
@@ -10,8 +11,22 @@ function App() {
       <div className="App">
         <h1>Hệ thống Quản lý Nhân sự</h1>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/departments/:id" element={<DepartmentDetailPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/departments/:id"
+            element={
+              <ProtectedRoute>
+                <DepartmentDetailPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/name-game" element={<NameGamePage />} />
         </Routes>
       </div>
