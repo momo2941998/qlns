@@ -1,9 +1,10 @@
 import multer from 'multer';
 import path from 'path';
 
-const storage = multer.diskStorage({
+// Disk storage for avatar uploads
+const diskStorage = multer.diskStorage({
   destination: (_req, _file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, 'uploads/avatar/');
   },
   filename: (_req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -11,7 +12,10 @@ const storage = multer.diskStorage({
   }
 });
 
-const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+// Memory storage for Excel imports
+const memoryStorage = multer.memoryStorage();
+
+const excelFileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const allowedTypes = ['.xlsx', '.xls'];
   const ext = path.extname(file.originalname).toLowerCase();
 
@@ -22,9 +26,19 @@ const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterC
   }
 };
 
+// For Excel imports - use memory storage
+export const uploadExcel = multer({
+  storage: memoryStorage,
+  fileFilter: excelFileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB
+  }
+});
+
+// For avatar uploads - use disk storage (kept for backward compatibility)
 export const upload = multer({
-  storage,
-  fileFilter,
+  storage: diskStorage,
+  fileFilter: excelFileFilter,
   limits: {
     fileSize: 5 * 1024 * 1024 // 5MB
   }

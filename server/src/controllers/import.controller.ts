@@ -18,8 +18,9 @@ export class ImportController {
         return;
       }
 
+      // Pass buffer instead of path for memory storage
       const result = await importService.importEmployeesFromExcel(
-        req.file.path,
+        req.file.buffer,
         departmentId
       );
 

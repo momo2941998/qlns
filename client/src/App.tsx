@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/Home';
 import DepartmentDetailPage from './components/DepartmentDetailPage';
+import NameGamePage from './components/NameGamePage';
 import './App.css';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/departments/:id" element={<DepartmentDetailPage />} />
+          <Route path="/name-game" element={<NameGamePage />} />
         </Routes>
       </div>
     </BrowserRouter>

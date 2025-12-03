@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { fetchEmployees, deleteEmployee } from '../features/employees/employeeSlice';
 import { fetchDepartments } from '../features/departments/departmentSlice';
@@ -115,6 +116,17 @@ const Home = () => {
               <div className="stat-label">Phòng ban</div>
             </div>
           </div>
+          <Link to="/name-game" className="stat-card stat-card-game">
+            <div className="stat-icon">🎮</div>
+            <div className="stat-content">
+              <div className="stat-label" style={{ fontSize: '18px', fontWeight: 'bold' }}>
+                Game Nhớ Tên
+              </div>
+              <div style={{ fontSize: '13px', marginTop: '5px', opacity: 0.9 }}>
+                Học tên đồng nghiệp
+              </div>
+            </div>
+          </Link>
         </div>
       </div>
 
@@ -340,6 +352,18 @@ const Home = () => {
 
         .stat-card:nth-child(4) {
           background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .stat-card-game {
+          background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+          cursor: pointer;
+          text-decoration: none;
+          transition: all 0.3s ease;
+        }
+
+        .stat-card-game:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
         .stat-icon {

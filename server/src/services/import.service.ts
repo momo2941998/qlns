@@ -1,6 +1,5 @@
 import * as XLSX from 'xlsx';
 import Employee from '../models/Employee';
-import fs from 'fs';
 
 interface ImportResult {
   success: number;
@@ -11,7 +10,7 @@ interface ImportResult {
 }
 
 export class ImportService {
-  async importEmployeesFromExcel(filePath: string, departmentId: string): Promise<ImportResult> {
+  async importEmployeesFromExcel(fileBuffer: Buffer, departmentId: string): Promise<ImportResult> {
     const result: ImportResult = {
       success: 0,
       created: 0,
@@ -21,8 +20,8 @@ export class ImportService {
     };
 
     try {
-      // Đọc file Excel
-      const workbook = XLSX.readFile(filePath);
+      // Đọc file Excel từ buffer (memory)
+      const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
 
@@ -95,8 +94,7 @@ export class ImportService {
         }
       }
 
-      // Xóa file sau khi xử lý
-      fs.unlinkSync(filePath);
+      // File đã được xử lý trong memory, không cần xóa
 
     } catch (error: any) {
       result.errors.push(`Lỗi đọc file: ${error.message}`);
