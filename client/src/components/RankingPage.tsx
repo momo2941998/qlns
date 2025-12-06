@@ -11,10 +11,12 @@ const RankingPage = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedEmployees, setSelectedEmployees] = useState<Employee[]>([]);
   const [gameMode, setGameMode] = useState<GameMode>('face-to-name');
+  const [playerName, setPlayerName] = useState('');
 
-  const handleStart = (employees: Employee[], mode: GameMode) => {
+  const handleStart = (employees: Employee[], mode: GameMode, name: string) => {
     setSelectedEmployees(employees);
     setGameMode(mode);
+    setPlayerName(name);
     setGameStarted(true);
   };
 
@@ -61,6 +63,8 @@ const RankingPage = () => {
           employees={selectedEmployees}
           mode={gameMode}
           onExit={handleExit}
+          playerName={playerName}
+          gameType="ranking"
         />
       ) : (
         <RankingSetup onStart={handleStart} />

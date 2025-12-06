@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Employee } from '../types';
 import { getAvatarUrl } from '../utils/imageUrl';
+import { rankingAPI } from '../services/api';
 
 interface NameGameProps {
   employees: Employee[];
   mode: 'face-to-name' | 'name-to-face';
   onExit: () => void;
+  playerName?: string; // Optional: for ranking mode
+  gameType?: 'normal' | 'ranking'; // Tag to differentiate game modes
 }
 
 interface Question {
@@ -23,7 +26,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return shuffled;
 };
 
-const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
+const NameGame = ({ employees, mode, onExit, playerName, gameType = 'normal' }: NameGameProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -101,6 +104,26 @@ const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
     return () => clearInterval(interval);
   }, [showResults]);
 
+  // Submit ranking score when game ends
+  useEffect(() => {
+    if (showResults && playerName && endTime) {
+      const totalTimeMs = endTime - startTime;
+      const timeInSeconds = Math.round(totalTimeMs / 1000);
+
+      rankingAPI.submitScore({
+        playerName,
+        score,
+        totalQuestions: questions.length,
+        timeInSeconds,
+        mode,
+      }).then(() => {
+        console.log('✅ Đã ghi nhận kết quả lên bảng xếp hạng!');
+      }).catch((error) => {
+        console.error('❌ Lỗi khi ghi nhận kết quả:', error);
+      });
+    }
+  }, [showResults, playerName, endTime, score, questions.length, mode, startTime]);
+
   if (questions.length === 0) {
     // Check if it's because of insufficient employees
     const maleCount = employees.filter((emp) => emp.gioiTinh === 'Nam').length;
@@ -136,6 +159,13 @@ const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
 
     if (empId === currentQuestion.correctEmployee._id) {
       setScore(score + 1);
+    }
+
+    // Auto next for ranking mode
+    if (gameType === 'ranking') {
+      setTimeout(() => {
+        handleNext();
+      }, 1500); // 1.5 seconds delay to see the result
     }
   };
 
@@ -261,8 +291,36 @@ const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
           gap: '10px',
         }}
       >
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <strong>Câu hỏi: {currentQuestionIndex + 1} / {questions.length}</strong>
+          {gameType === 'ranking' && (
+            <span
+              style={{
+                padding: '4px 12px',
+                backgroundColor: '#667eea',
+                color: 'white',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+              }}
+            >
+              🏆 RANKING
+            </span>
+          )}
+          {gameType === 'normal' && (
+            <span
+              style={{
+                padding: '4px 12px',
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+              }}
+            >
+              🎮 NORMAL
+            </span>
+          )}
         </div>
         <div style={{
           fontSize: '18px',
@@ -414,8 +472,8 @@ const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
         })}
       </div>
 
-      {/* Next button */}
-      {isAnswered && (
+      {/* Next button - Only show in normal mode */}
+      {isAnswered && gameType === 'normal' && (
         <div style={{ textAlign: 'center' }}>
           <button
             className="btn btn-primary"

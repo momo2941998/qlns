@@ -6,6 +6,7 @@ export const ENV = {
   PORT: parseInt(process.env.PORT || '5000', 10),
   MONGO_URI: process.env.MONGO_URI || 'mongodb://admin:admin123@10.4.201.26:27017/qlns_db?authSource=admin',
   UPLOAD_DIR: process.env.UPLOAD_DIR || 'uploads/avatars',
+  RANKING_SECRET_KEY: process.env.RANKING_SECRET_KEY || '',
 } as const;
 
 // Log environment variables

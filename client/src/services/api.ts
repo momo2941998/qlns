@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Department, Employee } from '../types';
+import { generateChecksum } from '../utils/checksum';
 
 const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL}/api`,
@@ -36,6 +37,41 @@ export const avatarAPI = {
     }),
   delete: (employeeId: string) =>
     api.delete<{ message: string }>(`/avatar/${employeeId}`),
+};
+
+// Ranking API
+export interface RankingScore {
+  _id: string;
+  playerName: string;
+  score: number;
+  totalQuestions: number;
+  timeInSeconds: number;
+  mode: 'face-to-name' | 'name-to-face';
+  percentage: number;
+  createdAt: string;
+}
+
+export const rankingAPI = {
+  submitScore: async (data: {
+    playerName: string;
+    score: number;
+    totalQuestions: number;
+    timeInSeconds: number;
+    mode: 'face-to-name' | 'name-to-face';
+  }) => {
+    // Generate checksum for the request body
+    const checksum = await generateChecksum(data);
+
+    // Send request with checksum header
+    return api.post<{ message: string; data: RankingScore }>('/ranking', data, {
+      headers: {
+        'x-checksum': checksum,
+      },
+    });
+  },
+
+  getRankings: (params?: { mode?: 'face-to-name' | 'name-to-face'; limit?: number }) =>
+    api.get<{ data: RankingScore[] }>('/ranking', { params }),
 };
 
 export default api;

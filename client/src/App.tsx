@@ -10,7 +10,6 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <h1>Hệ thống Quản lý Nhân sự</h1>
         <Routes>
           <Route
             path="/"

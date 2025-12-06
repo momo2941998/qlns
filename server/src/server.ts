@@ -8,6 +8,7 @@ import departmentRoutes from './routes/department.routes';
 import employeeRoutes from './routes/employee.routes';
 import importRoutes from './routes/import.routes';
 import avatarRoutes from './routes/avatar.routes';
+import rankingRoutes from './routes/ranking.routes';
 
 const app: Application = express();
 
@@ -32,6 +33,7 @@ app.use('/api/departments', departmentRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/import', importRoutes);
 app.use('/api/avatar', avatarRoutes);
+app.use('/api/ranking', rankingRoutes);
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {
