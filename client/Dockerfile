@@ -33,8 +33,8 @@
 FROM node:20-alpine
 WORKDIR /app
 RUN npm install -g serve@14
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
+# COPY package*.json ./
+# RUN npm ci
+# COPY . .
+# RUN npm run build
 CMD ["serve", "-s", "dist", "-l", "80"]
