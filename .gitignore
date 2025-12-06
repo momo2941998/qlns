@@ -45,3 +45,5 @@ persist/
 # MongoDB data
 mongodb_data/
 uploads/
+
+.claude/settings.local.json

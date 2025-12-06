@@ -39,6 +39,14 @@ const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
     // Group employees by gender
     const maleEmployees = employees.filter((emp) => emp.gioiTinh === 'Nam');
     const femaleEmployees = employees.filter((emp) => emp.gioiTinh === 'Nữ');
+    const otherEmployees = employees.filter((emp) => emp.gioiTinh === 'Khác');
+
+    console.log('📊 Phân bố giới tính:', {
+      tổng: employees.length,
+      nam: maleEmployees.length,
+      nữ: femaleEmployees.length,
+      khác: otherEmployees.length,
+    });
 
     // Determine which genders have enough people (at least 4)
     const validGenders: ('Nam' | 'Nữ')[] = [];
@@ -47,6 +55,11 @@ const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
 
     // Filter employees to only include those from valid genders
     const validEmployees = employees.filter((emp) => validGenders.includes(emp.gioiTinh as 'Nam' | 'Nữ'));
+
+    console.log('✅ Số câu hỏi sẽ tạo:', validEmployees.length);
+    if (otherEmployees.length > 0) {
+      console.log('⚠️ Loại bỏ', otherEmployees.length, 'người có giới tính "Khác":', otherEmployees.map(e => e.hoTen));
+    }
 
     if (validEmployees.length === 0) {
       setQuestions([]);

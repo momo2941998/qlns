@@ -127,6 +127,17 @@ const Home = () => {
               </div>
             </div>
           </Link>
+          <Link to="/ranking" className="stat-card stat-card-ranking">
+            <div className="stat-icon">🏆</div>
+            <div className="stat-content">
+              <div className="stat-label" style={{ fontSize: '18px', fontWeight: 'bold' }}>
+                Ranking
+              </div>
+              <div style={{ fontSize: '13px', marginTop: '5px', opacity: 0.9 }}>
+                Thách thức toàn bộ
+              </div>
+            </div>
+          </Link>
         </div>
       </div>
 
@@ -362,6 +373,18 @@ const Home = () => {
         }
 
         .stat-card-game:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-card-ranking {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          cursor: pointer;
+          text-decoration: none;
+          transition: all 0.3s ease;
+        }
+
+        .stat-card-ranking:hover {
           transform: translateY(-5px);
           box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }

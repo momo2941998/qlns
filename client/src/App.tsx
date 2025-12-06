@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/Home';
 import DepartmentDetailPage from './components/DepartmentDetailPage';
 import NameGamePage from './components/NameGamePage';
+import RankingPage from './components/RankingPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
@@ -28,6 +29,7 @@ function App() {
             }
           />
           <Route path="/name-game" element={<NameGamePage />} />
+          <Route path="/ranking" element={<RankingPage />} />
         </Routes>
       </div>
     </BrowserRouter>
