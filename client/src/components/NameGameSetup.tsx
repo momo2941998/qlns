@@ -45,6 +45,20 @@ const NameGameSetup = ({ onStart }: NameGameSetupProps) => {
       alert('Vui lòng chọn ít nhất 4 người để chơi game!');
       return;
     }
+
+    // Check gender requirements
+    const maleCount = selectedEmployees.filter((emp) => emp.gioiTinh === 'Nam').length;
+    const femaleCount = selectedEmployees.filter((emp) => emp.gioiTinh === 'Nữ').length;
+
+    if (maleCount < 4 && femaleCount < 4) {
+      alert(
+        `Cần ít nhất 4 nam HOẶC 4 nữ để chơi!\n\n` +
+        `Hiện tại bạn đã chọn: ${maleCount} nam, ${femaleCount} nữ\n\n` +
+        `Vui lòng chọn thêm để đủ điều kiện.`
+      );
+      return;
+    }
+
     onStart(selectedEmployees, mode);
   };
 
@@ -90,14 +104,37 @@ const NameGameSetup = ({ onStart }: NameGameSetupProps) => {
       </div>
 
       {/* Selection controls */}
-      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
         <div>
-          <strong>Đã chọn: {selectedIds.length} / {employeesWithAvatar.length} người</strong>
-          {selectedIds.length < 4 && (
-            <span style={{ color: 'red', marginLeft: '10px', fontSize: '14px' }}>
-              (Cần ít nhất 4 người)
-            </span>
-          )}
+          <div>
+            <strong>Đã chọn: {selectedIds.length} / {employeesWithAvatar.length} người</strong>
+          </div>
+          {(() => {
+            const selectedEmployees = employees.filter((emp) => selectedIds.includes(emp._id));
+            const maleCount = selectedEmployees.filter((emp) => emp.gioiTinh === 'Nam').length;
+            const femaleCount = selectedEmployees.filter((emp) => emp.gioiTinh === 'Nữ').length;
+            const hasEnoughMale = maleCount >= 4;
+            const hasEnoughFemale = femaleCount >= 4;
+            const isValid = hasEnoughMale || hasEnoughFemale;
+
+            return (
+              <div style={{ fontSize: '13px', marginTop: '5px' }}>
+                <span style={{ color: '#666' }}>
+                  ({maleCount} nam, {femaleCount} nữ)
+                </span>
+                {!isValid && (
+                  <div style={{ color: '#f44336', marginTop: '3px' }}>
+                    ⚠️ Cần ít nhất 4 nam HOẶC 4 nữ để chơi
+                  </div>
+                )}
+                {isValid && (
+                  <div style={{ color: '#4CAF50', marginTop: '3px' }}>
+                    ✓ Đủ điều kiện để chơi
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button className="btn btn-secondary" onClick={selectAll}>
@@ -178,7 +215,12 @@ const NameGameSetup = ({ onStart }: NameGameSetupProps) => {
         <button
           className="btn btn-primary"
           onClick={handleStart}
-          disabled={selectedIds.length < 4}
+          disabled={(() => {
+            const selectedEmployees = employees.filter((emp) => selectedIds.includes(emp._id));
+            const maleCount = selectedEmployees.filter((emp) => emp.gioiTinh === 'Nam').length;
+            const femaleCount = selectedEmployees.filter((emp) => emp.gioiTinh === 'Nữ').length;
+            return maleCount < 4 && femaleCount < 4;
+          })()}
           style={{
             fontSize: '18px',
             padding: '12px 40px',

@@ -13,6 +13,16 @@ interface Question {
   options: Employee[];
 }
 
+// Fisher-Yates shuffle algorithm for better randomization
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -20,21 +30,43 @@ const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
+  const [startTime, setStartTime] = useState<number>(Date.now());
+  const [endTime, setEndTime] = useState<number | null>(null);
+  const [currentTime, setCurrentTime] = useState<number>(Date.now());
 
   // Generate all questions at start
   useEffect(() => {
+    // Group employees by gender
+    const maleEmployees = employees.filter((emp) => emp.gioiTinh === 'Nam');
+    const femaleEmployees = employees.filter((emp) => emp.gioiTinh === 'Nữ');
+
+    // Determine which genders have enough people (at least 4)
+    const validGenders: ('Nam' | 'Nữ')[] = [];
+    if (maleEmployees.length >= 4) validGenders.push('Nam');
+    if (femaleEmployees.length >= 4) validGenders.push('Nữ');
+
+    // Filter employees to only include those from valid genders
+    const validEmployees = employees.filter((emp) => validGenders.includes(emp.gioiTinh as 'Nam' | 'Nữ'));
+
+    if (validEmployees.length === 0) {
+      setQuestions([]);
+      return;
+    }
+
     const generatedQuestions: Question[] = [];
-    const shuffledEmployees = [...employees].sort(() => Math.random() - 0.5);
+    const shuffledEmployees = shuffleArray(validEmployees);
 
     shuffledEmployees.forEach((correctEmp) => {
-      // Get 3 random wrong answers
-      const wrongOptions = employees
-        .filter((emp) => emp._id !== correctEmp._id)
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3);
+      // Get employees of the same gender as the correct answer
+      const sameGenderEmployees = employees.filter(
+        (emp) => emp.gioiTinh === correctEmp.gioiTinh && emp._id !== correctEmp._id
+      );
+
+      // Get 3 random wrong answers from same gender
+      const wrongOptions = shuffleArray(sameGenderEmployees).slice(0, 3);
 
       // Combine and shuffle options
-      const options = [correctEmp, ...wrongOptions].sort(() => Math.random() - 0.5);
+      const options = shuffleArray([correctEmp, ...wrongOptions]);
 
       generatedQuestions.push({
         correctEmployee: correctEmp,
@@ -45,7 +77,39 @@ const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
     setQuestions(generatedQuestions);
   }, [employees]);
 
+  // Update timer every second
+  useEffect(() => {
+    if (showResults) return; // Stop timer when game ends
+
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [showResults]);
+
   if (questions.length === 0) {
+    // Check if it's because of insufficient employees
+    const maleCount = employees.filter((emp) => emp.gioiTinh === 'Nam').length;
+    const femaleCount = employees.filter((emp) => emp.gioiTinh === 'Nữ').length;
+
+    if (maleCount < 4 && femaleCount < 4) {
+      return (
+        <div style={{ textAlign: 'center', padding: '40px', maxWidth: '600px', margin: '0 auto' }}>
+          <h2 style={{ color: '#f44336', marginBottom: '20px' }}>⚠️ Không đủ điều kiện</h2>
+          <div style={{ fontSize: '16px', color: '#666', marginBottom: '20px' }}>
+            Game yêu cầu tối thiểu <strong>4 nhân viên nam</strong> hoặc <strong>4 nhân viên nữ</strong> để chơi.
+          </div>
+          <div style={{ fontSize: '14px', color: '#999', marginBottom: '30px' }}>
+            Hiện tại: {maleCount} nam, {femaleCount} nữ
+          </div>
+          <button className="btn btn-secondary" onClick={onExit}>
+            Quay lại
+          </button>
+        </div>
+      );
+    }
+
     return <div style={{ textAlign: 'center', padding: '40px' }}>Đang chuẩn bị câu hỏi...</div>;
   }
 
@@ -68,23 +132,49 @@ const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
       setSelectedAnswer(null);
       setIsAnswered(false);
     } else {
+      setEndTime(Date.now());
       setShowResults(true);
     }
   };
 
   const handleRestart = () => {
+    const now = Date.now();
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
     setIsAnswered(false);
     setScore(0);
     setShowResults(false);
+    setStartTime(now);
+    setCurrentTime(now);
+    setEndTime(null);
     // Re-shuffle questions
-    setQuestions([...questions].sort(() => Math.random() - 0.5));
+    setQuestions(shuffleArray(questions));
   };
 
   // Results screen
   if (showResults) {
     const percentage = Math.round((score / questions.length) * 100);
+
+    // Calculate total time
+    const totalTimeMs = endTime ? endTime - startTime : 0;
+    const totalTimeSec = Math.round(totalTimeMs / 1000);
+    const minutes = Math.floor(totalTimeSec / 60);
+    const seconds = totalTimeSec % 60;
+    const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+    // Calculate average time per question
+    const avgTimePerQuestion = totalTimeSec / questions.length;
+    let speedRating = '';
+    if (avgTimePerQuestion < 5) {
+      speedRating = 'Rất nhanh! ⚡';
+    } else if (avgTimePerQuestion < 10) {
+      speedRating = 'Nhanh 🚀';
+    } else if (avgTimePerQuestion < 15) {
+      speedRating = 'Trung bình ⏱️';
+    } else {
+      speedRating = 'Chậm rãi 🐢';
+    }
+
     return (
       <div style={{ padding: '40px', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
         <h2>Kết quả</h2>
@@ -101,11 +191,30 @@ const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
         <div style={{ fontSize: '24px', marginBottom: '10px' }}>
           Đúng {score} / {questions.length} câu
         </div>
-        <div style={{ fontSize: '16px', color: '#666', marginBottom: '40px' }}>
+        <div style={{ fontSize: '16px', color: '#666', marginBottom: '20px' }}>
           {percentage >= 80 && 'Xuất sắc! Bạn nhớ tên rất tốt!'}
           {percentage >= 50 && percentage < 80 && 'Khá tốt! Cố gắng thêm nhé!'}
           {percentage < 50 && 'Cần luyện tập thêm!'}
         </div>
+
+        {/* Time stats */}
+        <div style={{
+          backgroundColor: '#f5f5f5',
+          borderRadius: '8px',
+          padding: '20px',
+          marginBottom: '30px'
+        }}>
+          <div style={{ fontSize: '18px', marginBottom: '10px', color: '#666' }}>
+            ⏱️ Thời gian hoàn thành
+          </div>
+          <div style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '10px' }}>
+            {timeString}
+          </div>
+          <div style={{ fontSize: '14px', color: '#666' }}>
+            Trung bình {avgTimePerQuestion.toFixed(1)}s/câu • {speedRating}
+          </div>
+        </div>
+
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
           <button className="btn btn-primary" onClick={handleRestart}>
             Chơi lại
@@ -118,6 +227,13 @@ const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
     );
   }
 
+  // Calculate elapsed time for display
+  const elapsedMs = currentTime - startTime;
+  const elapsedSec = Math.floor(elapsedMs / 1000);
+  const displayMinutes = Math.floor(elapsedSec / 60);
+  const displaySeconds = elapsedSec % 60;
+  const elapsedTimeString = `${displayMinutes}:${displaySeconds.toString().padStart(2, '0')}`;
+
   // Game screen
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
@@ -128,10 +244,22 @@ const NameGame = ({ employees, mode, onExit }: NameGameProps) => {
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: '30px',
+          flexWrap: 'wrap',
+          gap: '10px',
         }}
       >
         <div>
           <strong>Câu hỏi: {currentQuestionIndex + 1} / {questions.length}</strong>
+        </div>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: 'bold',
+          color: '#666',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '5px',
+        }}>
+          ⏱️ {elapsedTimeString}
         </div>
         <div>
           <strong>Điểm: {score}</strong>
