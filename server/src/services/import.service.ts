@@ -108,10 +108,20 @@ export class ImportService {
 
     // Nếu là Excel date number
     if (typeof dateValue === 'number') {
-      const excelEpoch = new Date(1899, 11, 30);
+      // Excel date: số ngày kể từ 1900-01-01 (với bug 1900 là năm nhuận)
+      // Chuyển đổi trực tiếp sang local date để tránh vấn đề timezone
+      const excelEpoch = new Date(Date.UTC(1899, 11, 30));
       const msPerDay = 24 * 60 * 60 * 1000;
-      const date = new Date(excelEpoch.getTime() + dateValue * msPerDay);
-      return this.normalizeDate(date);
+      const utcDate = new Date(excelEpoch.getTime() + dateValue * msPerDay);
+
+      // Lấy ngày tháng năm từ UTC, sau đó tạo Date object với local timezone
+      const year = utcDate.getUTCFullYear();
+      const month = utcDate.getUTCMonth();
+      const day = utcDate.getUTCDate();
+
+      // Tạo date mới với local timezone
+      const localDate = new Date(year, month, day, 0, 0, 0, 0);
+      return localDate;
     }
 
     // Nếu là string
@@ -197,17 +207,18 @@ export class ImportService {
     return undefined;
   }
 
-  // Chuẩn hóa ngày về dạng YYYY-MM-DD (set giờ về 00:00:00 UTC)
+  // Chuẩn hóa ngày về dạng YYYY-MM-DD (set giờ về 00:00:00 theo local timezone)
   private normalizeDate(date: Date): Date {
     if (!date || isNaN(date.getTime())) return date;
 
-    // Tạo Date mới với giờ UTC để tránh vấn đề timezone
-    const normalized = new Date(Date.UTC(
+    // Tạo Date mới với giờ 00:00:00 theo timezone local (Asia/Ho_Chi_Minh)
+    // Không dùng UTC để tránh lệch múi giờ
+    const normalized = new Date(
       date.getFullYear(),
       date.getMonth(),
       date.getDate(),
       0, 0, 0, 0
-    ));
+    );
 
     return normalized;
   }
