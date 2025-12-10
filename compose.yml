@@ -1,0 +1,59 @@
+services:
+  # MongoDB Database
+  qlns_db:
+    image: mongo:6
+    container_name: qlns_db
+    restart: unless-stopped
+    ports:
+      - "27024:27017"
+    env_file:
+      - .env
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - qlns_network
+
+  # Backend Server
+  qlns_server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: qlns_server
+    restart: unless-stopped
+    ports:
+      - "8089:8089"
+    env_file:
+      - .env
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - qlns_network
+
+  # Frontend Client
+  qlns_client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: qlns_client
+    restart: unless-stopped
+    ports:
+      - "3004:80"
+    networks:
+      - qlns_network
+    depends_on:
+      - qlns_server
+    volumes:
+      - ./client/dist:/app/dist
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+  # uploads_data:
+  #   driver: local
+
+networks:
+  qlns_network:
+    driver: bridge
