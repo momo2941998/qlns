@@ -47,3 +47,6 @@ mongodb_data/
 uploads/
 
 .claude/settings.local.json
+
+database/
+mongo_scripts/

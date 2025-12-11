@@ -9,8 +9,8 @@ services:
     env_file:
       - .env
     volumes:
-      - mongodb_data:/data/db
-      - mongodb_config:/data/configdb
+      - ./database/data:/data/db
+      - ./database/config:/data/configdb
     networks:
       - qlns_network
 
@@ -45,14 +45,6 @@ services:
       - qlns_server
     volumes:
       - ./client/dist:/app/dist
-
-volumes:
-  mongodb_data:
-    driver: local
-  mongodb_config:
-    driver: local
-  # uploads_data:
-  #   driver: local
 
 networks:
   qlns_network:
